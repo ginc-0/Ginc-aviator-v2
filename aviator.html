@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GINC Aviator Game</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    #plane {
+      font-size: 3rem;
+      transition: transform 0.3s;
+    }
+    .crashed {
+      color: red;
+    }
+    .flying {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body class="p-8">
+  <h1 class="text-4xl font-bold mb-4">GINC Aviator</h1>
+  <p class="text-blue-300 italic mb-8">Fly high. Cash out before the boom.</p>
+  
+  <div id="plane" class="mb-6 flying">✈️</div>
+  <div class="text-3xl font-bold mb-2">Multiplier: <span id="multiplier">1.00</span>x</div>
+  
+  <div class="flex justify-center gap-4 mt-6 mb-4">
+    <button onclick="startFlight()" id="startBtn" class="bg-green-600 hover:bg-green-500 px-6 py-2 rounded">Start</button>
+    <button onclick="cashOut()" id="cashoutBtn" class="bg-yellow-500 hover:bg-yellow-400 px-6 py-2 rounded" disabled>Cash Out</button>
+  </div>
+  
+  <div id="status" class="mt-4 text-lg"></div>
+  <div class="mt-12 text-sm text-gray-400">&copy; 2025 GINC — Powered by Purpose</div>
+
+  <script>
+    let multiplier = 1.00;
+    let crashPoint = 0;
+    let interval = null;
+    let flying = false;
+
+    function startFlight() {
+      resetGame();
+      multiplier = 1.00;
+      crashPoint = (Math.random() * 10 + 1).toFixed(2);
+      interval = setInterval(() => {
+        multiplier += 0.05;
+        multiplier = parseFloat(multiplier.toFixed(2));
+        document.getElementById("multiplier").textContent = multiplier.toFixed(2);
+        if (multiplier >= crashPoint) {
+          crash();
+        }
+      }, 100);
+      document.getElementById("cashoutBtn").disabled = false;
+      document.getElementById("startBtn").disabled = true;
+      flying = true;
+    }
+
+    function crash() {
+      clearInterval(interval);
+      document.getElementById("status").textContent = "💥 BOOM! You crashed at " + multiplier.toFixed(2) + "x";
+      document.getElementById("plane").classList.remove("flying");
+      document.getElementById("plane").classList.add("crashed");
+      document.getElementById("cashoutBtn").disabled = true;
+      flying = false;
+    }
+
+    function cashOut() {
+      if (!flying) return;
+      clearInterval(interval);
+      document.getElementById("status").textContent = "✅ You cashed out at " + multiplier.toFixed(2) + "x!";
+      document.getElementById("cashoutBtn").disabled = true;
+      document.getElementById("startBtn").disabled = false;
+      flying = false;
+    }
+
+    function resetGame() {
+      document.getElementById("status").textContent = "";
+      document.getElementById("plane").classList.remove("crashed");
+      document.getElementById("plane").classList.add("flying");
+      document.getElementById("startBtn").disabled = false;
+    }
+  </script>
+</body>
+</html>
